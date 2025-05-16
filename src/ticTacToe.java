@@ -33,10 +33,24 @@ public class ticTacToe implements ActionListener {
         textField.setOpaque(true);
 
         titlePanel.setLayout(new BorderLayout());
-        titlePanel.setBounds(0,0,800,100);
+        titlePanel.setBounds(100,100,800,100);
+
+        buttonPanel.setLayout(new GridLayout(3,3));
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
+//Added buttons in the button panel grid layout
+        for(int i = 0; i<9; ++i)
+        {
+            buttons[i] = new JButton();
+            buttonPanel.add(buttons[i]);
+            buttons[i].setFont(new Font("MV Boli",Font.BOLD,30));
+            buttons[i].setFocusable(false);
+            buttons[i].addActionListener(this);
+
+        }
 
         titlePanel.add(textField);
         frame.add(titlePanel, BorderLayout.NORTH);
+        frame.add(buttonPanel);
 
     }
 
