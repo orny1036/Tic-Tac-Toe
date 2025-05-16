@@ -68,6 +68,7 @@ public class ticTacToe implements ActionListener {
                        buttons[i].setText("X");
                        player1_turn = false;
                        textField.setText("O turn");
+                       check();
                    }
                }
                else
@@ -78,6 +79,7 @@ public class ticTacToe implements ActionListener {
                        buttons[i].setText("O");
                        player1_turn = true;
                        textField.setText("X turn");
+                       check();
                    }
                }
            }
@@ -107,17 +109,113 @@ public class ticTacToe implements ActionListener {
     }
     //checking winning condition
     public void check()
-    {
+    {   
+        //for checking X
+        //first row
+        if((buttons[0].getText() == "X") && (buttons[1].getText() == "X") && (buttons[2].getText() == "X"))
+            {
+                xWins(0,1,2);
+            }
+        //second row
+        if((buttons[3].getText() == "X") && (buttons[4].getText() == "X") && (buttons[5].getText() == "X"))
+        {
+            xWins(3,4,5);
+        }
+        //third row
+        if((buttons[6].getText() == "X") && (buttons[7].getText() == "X") && (buttons[8].getText() == "X"))
+        {
+            xWins(6,7,8);
+        }
+        //first column
+        if((buttons[0].getText() == "X") && (buttons[3].getText() == "X") && (buttons[6].getText() == "X"))
+        {
+            xWins(0,3,6);
+        }
+        //second column
+        if((buttons[1].getText() == "X") && (buttons[4].getText() == "X") && (buttons[7].getText() == "X"))
+        {
+            xWins(1,4,7);
+        }
+        //third column
+        if((buttons[2].getText() == "X") && (buttons[5].getText() == "X") && (buttons[8].getText() == "X"))
+        {
+            xWins(2,5,8);
+        }
+        //first corner
+        if((buttons[0].getText() == "X") && (buttons[4].getText() == "X") && (buttons[8].getText() == "X"))
+        {
+            xWins(0,4,8);
+        }
+        //second corner
+        if((buttons[2].getText() == "X") && (buttons[4].getText() == "X") && (buttons[6].getText() == "X"))
+        {
+            xWins(2,4,6);
+        }
 
+        //for checking X
+        //first row
+        if((buttons[0].getText() == "O") && (buttons[1].getText() == "O") && (buttons[2].getText() == "O"))
+        {
+            oWins(0,1,2);
+        }
+        //second row
+        if((buttons[3].getText() == "O") && (buttons[4].getText() == "O") && (buttons[5].getText() == "O"))
+        {
+            oWins(3,4,5);
+        }
+        //third row
+        if((buttons[6].getText() == "O") && (buttons[7].getText() == "O") && (buttons[8].getText() == "O"))
+        {
+            oWins(6,7,8);
+        }
+        //first column
+        if((buttons[0].getText() == "O") && (buttons[3].getText() == "O") && (buttons[6].getText() == "O"))
+        {
+            oWins(0,3,6);
+        }
+        //second column
+        if((buttons[1].getText() == "O") && (buttons[4].getText() == "O") && (buttons[7].getText() == "O"))
+        {
+            oWins(1,4,7);
+        }
+        //third column
+        if((buttons[2].getText() == "O") && (buttons[5].getText() == "O") && (buttons[8].getText() == "O"))
+        {
+            oWins(2,5,8);
+        }
+        //first corner
+        if((buttons[0].getText() == "O") && (buttons[4].getText() == "O") && (buttons[8].getText() == "O"))
+        {
+            oWins(0,4,8);
+        }
+        //second corner
+        if((buttons[2].getText() == "O") && (buttons[4].getText() == "O") && (buttons[6].getText() == "O"))
+        {
+            oWins(2,4,6);
+        }
     }
     //situation where X wins(going to receive winning combination of buttons basically)
-    public void xWins(int a, int b)
+    public void xWins(int a, int b, int c)
     {
-
+        buttons[a].setBackground(Color.green);
+        buttons[b].setBackground(Color.green);
+        buttons[c].setBackground(Color.green);
+        for(int i = 0; i<9; ++i)
+        {
+            buttons[i].setEnabled(false);
+        }
+        textField.setText("X wins");
     }
     //situation where O wins(going to receive winning combination of buttons basically)
-    public void yWins(int a, int b)
+    public void oWins(int a, int b, int c)
     {
-
+        buttons[a].setBackground(Color.green);
+        buttons[b].setBackground(Color.green);
+        buttons[c].setBackground(Color.green);
+        for(int i = 0; i<9; ++i)
+        {
+            buttons[i].setEnabled(false);
+        }
+        textField.setText("O wins");
     }
 }
