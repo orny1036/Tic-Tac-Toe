@@ -17,8 +17,9 @@ public class ticTacToe implements ActionListener {
 //To display messages or some sort
     JLabel textField = new JLabel();
     JButton[] buttons = new JButton[9];
-    JButton restartButton = new JButton("Restart");
 
+    JButton restartButton = new JButton("Restart");
+    JButton exitButton = new JButton("Exit");
 
     boolean player1_turn;
     int xScore = 0;
@@ -44,7 +45,9 @@ public class ticTacToe implements ActionListener {
 
         buttonPanel.setLayout(new GridLayout(3,3));
         buttonPanel.setBackground(Color.LIGHT_GRAY);
-//Added buttons in the button panel grid layout
+        //horizontal bottom Layout
+        bottomPanel.setLayout(new FlowLayout());
+      //Added buttons in the button panel grid layout
         for(int i = 0; i<9; ++i)
         {
             buttons[i] = new JButton();
@@ -55,14 +58,20 @@ public class ticTacToe implements ActionListener {
 
         }
 
-        //Set up the Restart button
-        restartButton.setFont(new Font("Arial",Font.BOLD,30));
+        //Set up the Restart and Exit button
+        restartButton.setFont(new Font("MV Boli",Font.BOLD,30));
+        exitButton.setFont(new Font("MV Boli",Font.BOLD,30));
+        restartButton.setBackground(Color.cyan);
+        exitButton.setBackground(Color.red);
         restartButton.setFocusable(false);
-        restartButton.addActionListener(e->resetGame());
+        exitButton.setFocusable(false);
+        restartButton.addActionListener(this);
+        exitButton.addActionListener(this);
 
-        //Add restart button to the bottom panel
-        bottomPanel.setLayout(new FlowLayout());
+        //Add Restart and Exit button to the bottom panel
+
         bottomPanel.add(restartButton);
+        bottomPanel.add(exitButton);
 
         frame.add(bottomPanel,BorderLayout.SOUTH);
         titlePanel.add(textField);
@@ -105,6 +114,19 @@ public class ticTacToe implements ActionListener {
                    }
                }
                check();
+           }
+       }
+       if(e.getSource() == restartButton)
+       {
+           resetGame();
+       }
+       else if(e.getSource()==exitButton)
+       {
+           //System.exit(0);
+           int choice = JOptionPane.showConfirmDialog(frame,"Exit the game?", "Confirsm Exit", JOptionPane.YES_NO_CANCEL_OPTION);
+           if(choice == JOptionPane.YES_OPTION)
+           {
+               System.exit(0);
            }
        }
     }
@@ -259,6 +281,7 @@ public class ticTacToe implements ActionListener {
     //situation where O wins(going to receive winning combination of buttons basically)
     public void oWins(int a, int b, int c)
     {
+        oScore++;
         buttons[a].setBackground(Color.green);
         buttons[b].setBackground(Color.green);
         buttons[c].setBackground(Color.green);
