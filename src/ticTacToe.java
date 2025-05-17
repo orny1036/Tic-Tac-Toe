@@ -12,10 +12,17 @@ public class ticTacToe implements ActionListener {
    JPanel titlePanel = new JPanel();
   //A panel to hold al the buttons
     JPanel buttonPanel = new JPanel();
+    //A panel to hold the restart button
+    JPanel bottomPanel = new JPanel();
 //To display messages or some sort
     JLabel textField = new JLabel();
     JButton[] buttons = new JButton[9];
+    JButton restartButton = new JButton("Restart");
+
+
     boolean player1_turn;
+    int xScore = 0;
+    int oScore = 0;
 
     ticTacToe()
     {
@@ -27,7 +34,7 @@ public class ticTacToe implements ActionListener {
 
         textField.setBackground(new Color(0, 0, 0));
         textField.setForeground(Color.CYAN);
-        textField.setFont(new Font("Ink Free",Font.BOLD,55));
+        textField.setFont(new Font("Ink Free",Font.BOLD,45));
         textField.setHorizontalAlignment(JLabel.CENTER);
         textField.setText("Tic-Tac-Toe");
         textField.setOpaque(true);
@@ -48,6 +55,16 @@ public class ticTacToe implements ActionListener {
 
         }
 
+        //Set up the Restart button
+        restartButton.setFont(new Font("Arial",Font.BOLD,30));
+        restartButton.setFocusable(false);
+        restartButton.addActionListener(e->resetGame());
+
+        //Add restart button to the bottom panel
+        bottomPanel.setLayout(new FlowLayout());
+        bottomPanel.add(restartButton);
+
+        frame.add(bottomPanel,BorderLayout.SOUTH);
         titlePanel.add(textField);
         frame.add(titlePanel, BorderLayout.NORTH);
         frame.add(buttonPanel);
@@ -67,8 +84,11 @@ public class ticTacToe implements ActionListener {
                        buttons[i].setForeground(Color.red);
                        buttons[i].setText("X");
                        player1_turn = false;
-                       textField.setText("O turn");
-                       check();
+                       //Updated to show score in turn me ssage
+                      // textField.setText("O turn \n X: " + xScore + " O: " + oScore);
+                       textField.setText("<html>O turn<br>X: " + xScore + " O: " + oScore + "</html>");
+
+                       // check();
                    }
                }
                else
@@ -78,10 +98,13 @@ public class ticTacToe implements ActionListener {
                        buttons[i].setForeground(Color.yellow);
                        buttons[i].setText("O");
                        player1_turn = true;
-                       textField.setText("X turn");
-                       check();
+                     //  textField.setText("X turn \n X: " + xScore + " O: " + oScore);
+                       textField.setText("<html>X turn<br>X: " + xScore + " O: " + oScore + "</html>");
+
+                       // check();
                    }
                }
+               check();
            }
        }
     }
@@ -89,7 +112,7 @@ public class ticTacToe implements ActionListener {
     public void firstTurn() {
         //To show the title for 2 secs before assigning the player's turn.
         try{
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             //TODO Auto-generated catch block
             e.printStackTrace();
@@ -99,17 +122,32 @@ public class ticTacToe implements ActionListener {
         {
             player1_turn = true;
             //to show message for X's turn
-            textField.setText("X turn");
+            //textField.setText("X turn | X: " + xScore + "  O: " + oScore);
+            textField.setText("<html>X turn<br>X: " + xScore + " O: " + oScore + "</html>");
+
         }
         else
         {
             player1_turn = false;
-            textField.setText("O turn");
+          //  textField.setText("O turn | X: " + xScore + "  O: " + oScore);
+            textField.setText("<html>O turn<br>X: " + xScore + " O: " + oScore + "</html>");
+
         }
     }
     //checking winning condition
     public void check()
-    {   
+    {
+        //Covert buttons to a 3x3 string board for readability
+        String[][] board = new String[3][3];
+        int index = 0;
+        for(int i = 0; i<3; i++)
+        {
+           for(int j = 0; j<3; ++j)
+           {
+               board[i][j] = buttons[index].getText();
+               index++;
+           }
+        }
         //for checking X
         //first row
         if((buttons[0].getText() == "X") && (buttons[1].getText() == "X") && (buttons[2].getText() == "X"))
@@ -193,18 +231,30 @@ public class ticTacToe implements ActionListener {
         {
             oWins(2,4,6);
         }
+
+        boolean draw = true;
+        for(JButton button : buttons)
+        {
+            if(button.getText() == "")
+            {
+                draw = false;
+                break;
+            }
+        }
+
+        if(draw)
+        {
+            textField.setText("<html>Draw!<br>X: " + xScore + "  O: " + oScore + "</html>");
+        }
     }
     //situation where X wins(going to receive winning combination of buttons basically)
     public void xWins(int a, int b, int c)
     {
+        xScore++;
         buttons[a].setBackground(Color.green);
         buttons[b].setBackground(Color.green);
         buttons[c].setBackground(Color.green);
-        for(int i = 0; i<9; ++i)
-        {
-            buttons[i].setEnabled(false);
-        }
-        textField.setText("X wins");
+        endGame("X wins");
     }
     //situation where O wins(going to receive winning combination of buttons basically)
     public void oWins(int a, int b, int c)
@@ -212,10 +262,26 @@ public class ticTacToe implements ActionListener {
         buttons[a].setBackground(Color.green);
         buttons[b].setBackground(Color.green);
         buttons[c].setBackground(Color.green);
-        for(int i = 0; i<9; ++i)
-        {
-            buttons[i].setEnabled(false);
-        }
-        textField.setText("O wins");
+        endGame("O wins");
     }
+    private void endGame(String message)
+    {
+        for(JButton button : buttons)
+        {
+            button.setEnabled(false);
+        }
+        textField.setText("<html>" + message + "<br>" + " X: " + xScore + " O: " + oScore + "</html>");
+    }
+    private void resetGame()
+    {
+        for(JButton button : buttons)
+        {
+            button.setText("");
+            button.setEnabled(true);
+            button.setBackground(null);
+        }
+        firstTurn();
+    }
+
+
 }
