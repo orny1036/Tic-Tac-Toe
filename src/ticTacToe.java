@@ -5,62 +5,56 @@ import java.awt.event.ActionListener;
 import java.util.Random;
 
 public class ticTacToe implements ActionListener {
-//To determine whose turn it's gonna be first randomly
+
     Random random = new Random();
-   JFrame frame = new JFrame();
-   //A panel to hold the title
-   JPanel titlePanel = new JPanel();
-  //A panel to hold al the buttons
+    JFrame frame = new JFrame();
+    JPanel titlePanel = new JPanel();
     JPanel buttonPanel = new JPanel();
-    //A panel to hold the restart button
     JPanel bottomPanel = new JPanel();
-//To display messages or some sort
     JLabel textField = new JLabel();
     JButton[] buttons = new JButton[9];
-
     JButton restartButton = new JButton("Restart");
     JButton exitButton = new JButton("Exit");
 
-    boolean player1_turn;
+    Player player1 = new Player("Player 1", "X");
+    Player player2 = new Player("Player 2", "O");
+    Player currentPlayer;
+
     int xScore = 0;
     int oScore = 0;
 
-    ticTacToe()
-    {
+    ticTacToe() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800,800);
+        frame.setSize(800, 800);
         frame.getContentPane().setBackground(Color.BLACK);
         frame.setLayout(new BorderLayout());
         frame.setVisible(true);
 
         textField.setBackground(new Color(0, 0, 0));
         textField.setForeground(Color.CYAN);
-        textField.setFont(new Font("Ink Free",Font.BOLD,45));
+        textField.setFont(new Font("Ink Free", Font.BOLD, 45));
         textField.setHorizontalAlignment(JLabel.CENTER);
         textField.setText("Tic-Tac-Toe");
         textField.setOpaque(true);
 
         titlePanel.setLayout(new BorderLayout());
-        titlePanel.setBounds(100,100,800,100);
+        titlePanel.setBounds(100, 100, 800, 100);
 
-        buttonPanel.setLayout(new GridLayout(3,3));
+        buttonPanel.setLayout(new GridLayout(3, 3));
         buttonPanel.setBackground(Color.LIGHT_GRAY);
-        //horizontal bottom Layout
+
         bottomPanel.setLayout(new FlowLayout());
-      //Added buttons in the button panel grid layout
-        for(int i = 0; i<9; ++i)
-        {
+
+        for (int i = 0; i < 9; ++i) {
             buttons[i] = new JButton();
             buttonPanel.add(buttons[i]);
-            buttons[i].setFont(new Font("MV Boli",Font.BOLD,70));
+            buttons[i].setFont(new Font("MV Boli", Font.BOLD, 70));
             buttons[i].setFocusable(false);
             buttons[i].addActionListener(this);
-
         }
 
-        //Set up the Restart and Exit button
-        restartButton.setFont(new Font("MV Boli",Font.BOLD,30));
-        exitButton.setFont(new Font("MV Boli",Font.BOLD,30));
+        restartButton.setFont(new Font("MV Boli", Font.BOLD, 30));
+        exitButton.setFont(new Font("MV Boli", Font.BOLD, 30));
         restartButton.setBackground(Color.cyan);
         exitButton.setBackground(Color.red);
         restartButton.setFocusable(false);
@@ -68,243 +62,143 @@ public class ticTacToe implements ActionListener {
         restartButton.addActionListener(this);
         exitButton.addActionListener(this);
 
-        //Add Restart and Exit button to the bottom panel
-
         bottomPanel.add(restartButton);
         bottomPanel.add(exitButton);
 
-        frame.add(bottomPanel,BorderLayout.SOUTH);
+        frame.add(bottomPanel, BorderLayout.SOUTH);
         titlePanel.add(textField);
         frame.add(titlePanel, BorderLayout.NORTH);
         frame.add(buttonPanel);
 
+        firstTurn();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-       for(int i = 0; i<9; ++i)
-       {
-           if(e.getSource() == buttons[i])
-           {
-               if(player1_turn)
-               {
-                   if(buttons[i].getText() == "")
-                   {
-                       buttons[i].setForeground(Color.red);
-                       buttons[i].setText("X");
-                       player1_turn = false;
-                       //Updated to show score in turn me ssage
-                      // textField.setText("O turn \n X: " + xScore + " O: " + oScore);
-                       textField.setText("<html>O turn<br>X: " + xScore + " O: " + oScore + "</html>");
-
-                       // check();
-                   }
-               }
-               else
-               {
-                   if(buttons[i].getText()=="")
-                   {
-                       buttons[i].setForeground(Color.yellow);
-                       buttons[i].setText("O");
-                       player1_turn = true;
-                     //  textField.setText("X turn \n X: " + xScore + " O: " + oScore);
-                       textField.setText("<html>X turn<br>X: " + xScore + " O: " + oScore + "</html>");
-
-                       // check();
-                   }
-               }
-               check();
-           }
-       }
-       if(e.getSource() == restartButton)
-       {
-           resetGame();
-       }
-       else if(e.getSource()==exitButton)
-       {
-           //System.exit(0);
-           int choice = JOptionPane.showConfirmDialog(frame,"Exit the game?", "Confirsm Exit", JOptionPane.YES_NO_CANCEL_OPTION);
-           if(choice == JOptionPane.YES_OPTION)
-           {
-               System.exit(0);
-           }
-       }
+        for (int i = 0; i < 9; ++i) {
+            if (e.getSource() == buttons[i]) {
+                if (buttons[i].getText().equals("")) {
+                    buttons[i].setForeground(currentPlayer == player1 ? Color.red : Color.yellow);
+                    buttons[i].setText(currentPlayer.getSymbol());
+                    switchPlayer();
+                    textField.setText("X: " + player1.getScore() + " O: " + player2.getScore());
+                    check();
+                }
+            }
+        }
+        if (e.getSource() == restartButton) {
+            resetGame();
+        } else if (e.getSource() == exitButton) {
+            int choice = JOptionPane.showConfirmDialog(frame, "Exit the game?", "Confirm Exit", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (choice == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
+        }
     }
-    //determine whose turn would be first(random)
+
     public void firstTurn() {
-        //To show the title for 2 secs before assigning the player's turn.
-        try{
+        try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            //TODO Auto-generated catch block
             e.printStackTrace();
         }
-        //generate a random number between o and 1. If it's 0 then its the first player's turn and if its 1 then the second player's turn
-        if(random.nextInt(2) == 0)
-        {
-            player1_turn = true;
-            //to show message for X's turn
-            //textField.setText("X turn | X: " + xScore + "  O: " + oScore);
-            textField.setText("<html>X turn<br>X: " + xScore + " O: " + oScore + "</html>");
 
-        }
-        else
-        {
-            player1_turn = false;
-          //  textField.setText("O turn | X: " + xScore + "  O: " + oScore);
-            textField.setText("<html>O turn<br>X: " + xScore + " O: " + oScore + "</html>");
-
+        if (random.nextInt(2) == 0) {
+            currentPlayer = player1;
+            textField.setText("<html>Player 1's turn<br>Player 1: " + player1.getScore() + " | Player 2: " + player2.getScore() + "</html>");
+        } else {
+            currentPlayer = player2;
+            textField.setText("<html>Player 2's turn<br>Player 1: " + player1.getScore() + " | Player 2: " + player2.getScore() + "</html>");
         }
     }
-    //checking winning condition
-    public void check()
-    {
-        //Covert buttons to a 3x3 string board for readability
-        String[][] board = new String[3][3];
-        int index = 0;
-        for(int i = 0; i<3; i++)
-        {
-           for(int j = 0; j<3; ++j)
-           {
-               board[i][j] = buttons[index].getText();
-               index++;
-           }
-        }
-        //for checking X
-        //first row
-        if((buttons[0].getText() == "X") && (buttons[1].getText() == "X") && (buttons[2].getText() == "X"))
-            {
-                xWins(0,1,2);
-            }
-        //second row
-        if((buttons[3].getText() == "X") && (buttons[4].getText() == "X") && (buttons[5].getText() == "X"))
-        {
-            xWins(3,4,5);
-        }
-        //third row
-        if((buttons[6].getText() == "X") && (buttons[7].getText() == "X") && (buttons[8].getText() == "X"))
-        {
-            xWins(6,7,8);
-        }
-        //first column
-        if((buttons[0].getText() == "X") && (buttons[3].getText() == "X") && (buttons[6].getText() == "X"))
-        {
-            xWins(0,3,6);
-        }
-        //second column
-        if((buttons[1].getText() == "X") && (buttons[4].getText() == "X") && (buttons[7].getText() == "X"))
-        {
-            xWins(1,4,7);
-        }
-        //third column
-        if((buttons[2].getText() == "X") && (buttons[5].getText() == "X") && (buttons[8].getText() == "X"))
-        {
-            xWins(2,5,8);
-        }
-        //first corner
-        if((buttons[0].getText() == "X") && (buttons[4].getText() == "X") && (buttons[8].getText() == "X"))
-        {
-            xWins(0,4,8);
-        }
-        //second corner
-        if((buttons[2].getText() == "X") && (buttons[4].getText() == "X") && (buttons[6].getText() == "X"))
-        {
-            xWins(2,4,6);
-        }
 
-        //for checking X
-        //first row
-        if((buttons[0].getText() == "O") && (buttons[1].getText() == "O") && (buttons[2].getText() == "O"))
-        {
-            oWins(0,1,2);
-        }
-        //second row
-        if((buttons[3].getText() == "O") && (buttons[4].getText() == "O") && (buttons[5].getText() == "O"))
-        {
-            oWins(3,4,5);
-        }
-        //third row
-        if((buttons[6].getText() == "O") && (buttons[7].getText() == "O") && (buttons[8].getText() == "O"))
-        {
-            oWins(6,7,8);
-        }
-        //first column
-        if((buttons[0].getText() == "O") && (buttons[3].getText() == "O") && (buttons[6].getText() == "O"))
-        {
-            oWins(0,3,6);
-        }
-        //second column
-        if((buttons[1].getText() == "O") && (buttons[4].getText() == "O") && (buttons[7].getText() == "O"))
-        {
-            oWins(1,4,7);
-        }
-        //third column
-        if((buttons[2].getText() == "O") && (buttons[5].getText() == "O") && (buttons[8].getText() == "O"))
-        {
-            oWins(2,5,8);
-        }
-        //first corner
-        if((buttons[0].getText() == "O") && (buttons[4].getText() == "O") && (buttons[8].getText() == "O"))
-        {
-            oWins(0,4,8);
-        }
-        //second corner
-        if((buttons[2].getText() == "O") && (buttons[4].getText() == "O") && (buttons[6].getText() == "O"))
-        {
-            oWins(2,4,6);
-        }
+    public void check() {
+        // Checking for X
+        checkWin("X", player1);
+
+        // Checking for O
+        checkWin("O", player2);
 
         boolean draw = true;
-        for(JButton button : buttons)
-        {
-            if(button.getText() == "")
-            {
+        for (JButton button : buttons) {
+            if (button.getText().equals("")) {
                 draw = false;
                 break;
             }
         }
 
-        if(draw)
-        {
-            textField.setText("<html>Draw!<br>X: " + xScore + "  O: " + oScore + "</html>");
+        if (draw) {
+            textField.setText("<html>Draw!<br>X: " + player1.getScore() + " O: " + player2.getScore() + "</html>");
         }
     }
-    //situation where X wins(going to receive winning combination of buttons basically)
-    public void xWins(int a, int b, int c)
-    {
-        xScore++;
+
+        private void checkWin(String symbol, Player player) {
+            // First row
+            if((buttons[0].getText().equals(symbol)) && (buttons[1].getText().equals(symbol)) && (buttons[2].getText().equals(symbol))) {
+                decideWinner(player, 0, 1, 2);
+                return;
+            }
+            // Second row
+            if((buttons[3].getText().equals(symbol)) && (buttons[4].getText().equals(symbol)) && (buttons[5].getText().equals(symbol))) {
+                decideWinner(player, 3, 4, 5);
+                return;
+            }
+            // Third row
+            if((buttons[6].getText().equals(symbol)) && (buttons[7].getText().equals(symbol)) && (buttons[8].getText().equals(symbol))) {
+                decideWinner(player, 6, 7, 8);
+                return;
+            }
+            // First column
+            if((buttons[0].getText().equals(symbol)) && (buttons[3].getText().equals(symbol)) && (buttons[6].getText().equals(symbol))) {
+                decideWinner(player, 0, 3, 6);
+                return;
+            }
+            // Second column
+            if((buttons[1].getText().equals(symbol)) && (buttons[4].getText().equals(symbol)) && (buttons[7].getText().equals(symbol))) {
+                decideWinner(player, 1, 4, 7);
+                return;
+            }
+            // Third column
+            if((buttons[2].getText().equals(symbol)) && (buttons[5].getText().equals(symbol)) && (buttons[8].getText().equals(symbol))) {
+                decideWinner(player, 2, 5, 8);
+                return;
+            }
+            // First diagonal
+            if((buttons[0].getText().equals(symbol)) && (buttons[4].getText().equals(symbol)) && (buttons[8].getText().equals(symbol))) {
+                decideWinner(player, 0, 4, 8);
+                return;
+            }
+            // Second diagonal
+            if((buttons[2].getText().equals(symbol)) && (buttons[4].getText().equals(symbol)) && (buttons[6].getText().equals(symbol))) {
+                decideWinner(player, 2, 4, 6);
+                return;
+            }
+        }
+
+    public void switchPlayer() {
+        currentPlayer = (currentPlayer == player1) ? player2 : player1;
+        textField.setText(currentPlayer.getName() + "'s turn");
+    }
+
+    public void decideWinner(Player winner, int a, int b, int c) {
+        winner.incrementScore();
         buttons[a].setBackground(Color.green);
         buttons[b].setBackground(Color.green);
         buttons[c].setBackground(Color.green);
-        endGame("X wins");
-    }
-    //situation where O wins(going to receive winning combination of buttons basically)
-    public void oWins(int a, int b, int c)
-    {
-        oScore++;
-        buttons[a].setBackground(Color.green);
-        buttons[b].setBackground(Color.green);
-        buttons[c].setBackground(Color.green);
-        endGame("O wins");
-    }
-    private void endGame(String message)
-    {
-        for(JButton button : buttons)
-        {
+
+        for (JButton button : buttons) {
             button.setEnabled(false);
         }
-        textField.setText("<html>" + message + "<br>" + " X: " + xScore + " O: " + oScore + "</html>");
+
+        textField.setText("<html>" + winner.getName() + " wins<br>Score - X: " + player1.getScore() + " | O: " + player2.getScore() + "</html>");
     }
-    private void resetGame()
-    {
-        for(JButton button : buttons)
-        {
+
+    private void resetGame() {
+        for (JButton button : buttons) {
             button.setText("");
             button.setEnabled(true);
             button.setBackground(null);
         }
         firstTurn();
     }
-
-
 }
