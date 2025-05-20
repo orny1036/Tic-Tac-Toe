@@ -9,7 +9,7 @@ public class GameController {
     private Player currentPlayer;
     private GameBoard board;
     private JLabel textField;
-
+   // private int noFirstTurn = 0;
     public GameController(Player player1, Player player2, GameBoard board,  JLabel status)
     {
         this.player1 = player1;
@@ -30,11 +30,15 @@ public class GameController {
             currentPlayer = player1;
 
         }
-            else {
+
+        else
+        {
             currentPlayer = player2;
         }
-            updateStatus();
+
+       updateStatus();
     }
+
     private void updateStatus() {
         textField.setText("<html>" + currentPlayer.getName() + "'s Turn<br>" +
                 player1.getName() + ": " + player1.getScore() + " | " +
@@ -44,12 +48,17 @@ public class GameController {
     public void Move(int index)
     {
         JButton[] buttons = board.getButtons();
-        if(buttons[index].getText().equals(""))
+        if(currentPlayer instanceof aiPlayer)
+        {
+            index = currentPlayer.makeMove(board.getButtons());
+        }
+
+      if(buttons[index].getText().equals(""))
         {
             buttons[index].setForeground(currentPlayer == player1 ? Color.red : Color.yellow);
             buttons[index].setText(currentPlayer.getSymbol());
 
-          //  textField.setText(player1.getName() + ": " + player1.getScore() + player2.getName()+": " + player2.getScore());
+            //  textField.setText(player1.getName() + ": " + player1.getScore() + player2.getName()+": " + player2.getScore());
 
             if(board.checkWin(currentPlayer.getSymbol()))
             {
@@ -78,13 +87,19 @@ public class GameController {
                 return;
             }
             switchPlayer();
-            updateStatus();
+          //  updateStatus();
+
+            if (currentPlayer instanceof aiPlayer) {
+                // Let the AI make its move right away
+                Move(-1);
+            }
+
         }
     }
     public void switchPlayer()
     {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
-
+        updateStatus();
     }
 
     public void resetGame()
@@ -92,4 +107,5 @@ public class GameController {
         board.resetBoard();
         firstTurn();
     }
+
 }

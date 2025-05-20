@@ -1,9 +1,10 @@
+import javax.swing.*;
 import javax.swing.text.Caret;
 
-public class Player {
-    private String name;
-    private String symbol;
-    private int score;
+public abstract class Player {
+    protected String name;
+    protected String symbol;
+    protected int score;
 
     public Player(String name, String symbol)
     {
@@ -11,6 +12,7 @@ public class Player {
         this.symbol = symbol;
         this.score = 0;
     }
+    public abstract int makeMove(JButton[] buttons);
     public String getName()
     {
         return name;

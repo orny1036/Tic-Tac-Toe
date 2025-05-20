@@ -14,6 +14,7 @@ public class ticTacToeUI implements ActionListener {
     JButton[] buttons = new JButton[9];
     JButton restartButton = new JButton("Restart");
     JButton exitButton = new JButton("Exit");
+    private static int totalNumberOfRounds = 1;
 
     GameBoard gameBoard;
     GameController controller;
@@ -66,9 +67,8 @@ public class ticTacToeUI implements ActionListener {
         frame.add(titlePanel, BorderLayout.NORTH);
         frame.add(buttonPanel);
 
-        //firstTurn();
-        Player p1 = new Player("Hania","X");
-        Player p2 = new Player("Ahad","O");
+        Player p1 = new HumanPlayer("Player 1","X");
+        Player p2 = new HumanPlayer("Player 2","O");
         gameBoard = new GameBoard(buttons);
         controller = new GameController(p1,p2,gameBoard,textField);
         controller.firstTurn();
@@ -83,7 +83,10 @@ public class ticTacToeUI implements ActionListener {
             }
         }
         if (e.getSource() == restartButton) {
+
+            totalNumberOfRounds++;
            controller.resetGame();
+
         } else if (e.getSource() == exitButton) {
             int choice = JOptionPane.showConfirmDialog(frame, "Exit the game?", "Confirm", JOptionPane.YES_NO_CANCEL_OPTION);
             if (choice == JOptionPane.YES_OPTION) {
